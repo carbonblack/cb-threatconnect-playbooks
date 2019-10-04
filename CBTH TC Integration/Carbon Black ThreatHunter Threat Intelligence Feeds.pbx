@@ -1,0 +1,3675 @@
+{
+  "name" : "⬢ Carbon Black ThreatHunter Threat Intelligence Feeds",
+  "type" : "Standard",
+  "panX" : -69.0,
+  "panY" : 4.0,
+  "logLevel" : "TRACE",
+  "description" : "",
+  "priority" : 6,
+  "version" : "1.46",
+  "comment" : "Auto-Saved on Thu Oct 03 18:39:13 UTC 2019",
+  "jobList" : [ {
+    "id" : 86711,
+    "appCatalogItem" : {
+      "programName" : "7714b91440a8a7d3e2458e4b9c69ccb0",
+      "displayName" : "⬢ Carbon Black ThreatHunter Feed",
+      "programVersion" : "1.0.0",
+      "pipeRunLevel" : true
+    },
+    "name" : "Hybrid Analysis",
+    "jobParameterList" : [ {
+      "appCatalogItemParameter" : {
+        "paramName" : "cb.bulk"
+      },
+      "value" : ""
+    }, {
+      "appCatalogItemParameter" : {
+        "paramName" : "cb.score"
+      },
+      "value" : "6"
+    }, {
+      "appCatalogItemParameter" : {
+        "paramName" : "cb.url"
+      },
+      "value" : "${ORGANIZATION:TEXT:Carbon Black PSC URL}"
+    }, {
+      "appCatalogItemParameter" : {
+        "paramName" : "cb.api_id"
+      },
+      "value" : "${ORGANIZATION:TEXT:Carbon Black PSC API ID}"
+    }, {
+      "appCatalogItemParameter" : {
+        "paramName" : "cb.org_key"
+      },
+      "value" : "${ORGANIZATION:TEXT:Carbon Black PSC Org Key}"
+    }, {
+      "appCatalogItemParameter" : {
+        "paramName" : "tc.filters"
+      },
+      "value" : ""
+    }, {
+      "appCatalogItemParameter" : {
+        "paramName" : "cb.api_key"
+      },
+      "value" : "${ORGANIZATION:KEYCHAIN:Carbon Black PSC API Key}"
+    }, {
+      "appCatalogItemParameter" : {
+        "paramName" : "tc.owner.input"
+      },
+      "value" : ""
+    }, {
+      "appCatalogItemParameter" : {
+        "paramName" : "tc.owner.name"
+      },
+      "value" : "Carbon Black"
+    } ],
+    "locationLeft" : 620.0,
+    "locationTop" : 400.0,
+    "outputVariables" : "[{\"name\":\"data\",\"type\":\"String\",\"loopVariables\":false}]"
+  } ],
+  "playbookConnectionList" : [ {
+    "type" : "Pass",
+    "isCircularOnTarget" : true,
+    "sourceJobId" : 86711,
+    "targetTriggerId" : 9793
+  }, {
+    "type" : "Pass",
+    "isCircularOnTarget" : false,
+    "targetJobId" : 86711,
+    "sourceTriggerId" : 9793
+  } ],
+  "playbookTriggerList" : [ {
+    "id" : 9793,
+    "name" : "▶️ Every Hour",
+    "type" : "HttpLink",
+    "eventType" : "External",
+    "locationLeft" : 400.0,
+    "locationTop" : 300.0,
+    "httpResponseHeader" : "[]",
+    "httpResponseBody" : "#App:86711:data!String",
+    "anyOrg" : true,
+    "playbookTriggerFilterList" : [ ],
+    "cacheMinutes" : 120,
+    "cacheParams" : "{\"includeMethod\":false,\"includeBody\":false,\"queryParams\":[],\"headerNames\":[]}"
+  } ],
+  "playbookLabels" : [ {
+    "playbookLabelType" : {
+      "label" : "⬢ CB ThreatHunter"
+    }
+  } ],
+  "exportablePipes" : [ {
+    "definitionVersion" : "dc54ebbd81afed9d8f881b33f8e84c19",
+    "name" : "Get Filtered Indicators",
+    "type" : "Pipe",
+    "panX" : 627.0,
+    "panY" : 20.0,
+    "logLevel" : "TRACE",
+    "description" : "This Component will take multiple inputs for filter criteria and return multiple formats of the filtered data.",
+    "version" : "1.58",
+    "comment" : "Auto-Saved on Wed Oct 02 21:13:01 UTC 2019",
+    "jobList" : [ {
+      "id" : 86482,
+      "appCatalogItem" : {
+        "programName" : "TCPB - TC Api v1.0",
+        "displayName" : "ThreatConnect API",
+        "programVersion" : "1.0.6"
+      },
+      "name" : "Get Indicators",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "query_params"
+        },
+        "value" : "[{\"key\":\"includes\",\"value\":\"tags\"},{\"key\":\"includes\",\"value\":\"attributes\"},{\"key\":\"filters\",\"value\":\"#App:86480:find_replace.output!String\"},{\"key\":\"owner\",\"value\":\"#App:86489:owner_name!String\"},{\"key\":\"resultLimit\",\"value\":\"10000\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "method"
+        },
+        "value" : "GET"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "body"
+        }
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "headers"
+        },
+        "value" : "[]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "path"
+        },
+        "value" : "/v2/indicators"
+      } ],
+      "locationLeft" : 1660.0,
+      "locationTop" : 470.0,
+      "outputVariables" : "[{\"name\":\"tc.api.result\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86483,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️ Params",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"params\",\"value\":\"#App:86488:with_filters!String #App:86487:without_filters!String\"}]"
+      } ],
+      "locationLeft" : 1500.0,
+      "locationTop" : 460.0
+    }, {
+      "id" : 86481,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JMESPath v2.0",
+        "displayName" : "JMESPath",
+        "programVersion" : "2.0.5"
+      },
+      "name" : "Parse Indicators",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_array_expressions"
+        },
+        "value" : "[{\"key\":\"addresses\",\"value\":\"data.indicator[?type \\u003d\\u003d \\u0027Address\\u0027].summary\"},{\"key\":\"hosts\",\"value\":\"data.indicator[?type \\u003d\\u003d \\u0027Host\\u0027].summary\"},{\"key\":\"files\",\"value\":\"data.indicator[?type \\u003d\\u003d \\u0027File\\u0027].summary\"},{\"key\":\"all\",\"value\":\"data.indicator[?type \\u003d\\u003d \\u0027Address\\u0027 || type \\u003d\\u003d \\u0027Host\\u0027 || type \\u003d\\u003d \\u0027File\\u0027].summary\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "strip_quotes"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "json_data"
+        },
+        "value" : "#App:86482:tc.api.result!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_expressions"
+        },
+        "value" : "[{\"key\":\"addresses\",\"value\":\"data.indicator[?type \\u003d\\u003d \\u0027Address\\u0027].summary\"},{\"key\":\"hosts\",\"value\":\"data.indicator[?type \\u003d\\u003d \\u0027Host\\u0027].summary\"},{\"key\":\"files\",\"value\":\"data.indicator[?type \\u003d\\u003d \\u0027File\\u0027].summary\"},{\"key\":\"all\",\"value\":\"data.indicator[?type \\u003d\\u003d \\u0027Address\\u0027 || type \\u003d\\u003d \\u0027Host\\u0027 || type \\u003d\\u003d \\u0027File\\u0027].summary\"},{\"key\":\"tc.webLink\",\"value\":\"data.indicator[0].webLink\"}]"
+      } ],
+      "locationLeft" : 1660.0,
+      "locationTop" : 560.0,
+      "outputVariables" : "[{\"name\":\"addresses\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"hosts\",\"type\":\"StringArray\",\"loopVariables\":false},{\"name\":\"all\",\"type\":\"StringArray\",\"loopVariables\":false},{\"name\":\"files\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"all\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"files\",\"type\":\"StringArray\",\"loopVariables\":false},{\"name\":\"tc.webLink\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"hosts\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"addresses\",\"type\":\"StringArray\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86486,
+      "appCatalogItem" : {
+        "programName" : "Encode URL",
+        "displayName" : "Encode URL",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Encode Filters",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input"
+        },
+        "value" : "#App:86480:find_replace.output!String"
+      } ],
+      "locationLeft" : 1000.0,
+      "locationTop" : 450.0,
+      "outputVariables" : "[{\"name\":\"encode_url.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86480,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Remove \"None\" Filter",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : ""
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "^none$"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#Trigger:9781:filters!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      } ],
+      "locationLeft" : 1000.0,
+      "locationTop" : 360.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86484,
+      "appCatalogItem" : {
+        "programName" : "Encode URL",
+        "displayName" : "Encode URL",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Encode Owner Name",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input"
+        },
+        "value" : "#App:86489:owner_name!String"
+      } ],
+      "locationLeft" : 1000.0,
+      "locationTop" : 270.0,
+      "outputVariables" : "[{\"name\":\"encode_url.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86489,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️Owner Details",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"owner_name\",\"value\":\"#App:86496:owner_name_by_id!String #App:86490:owner_name_by_name!String #App:86485:owner_name_by_name!String\"},{\"key\":\"owner_type\",\"value\":\"#App:86496:owner_type_by_id!String #App:86490:owner_type_by_name!String #App:86485:owner_type_by_name!String\"},{\"key\":\"owner_id\",\"value\":\"#App:86496:owner_id_by_id!String #App:86490:owner_id_by_name!String #App:86485:owner_id_by_name!String\"}]"
+      } ],
+      "locationLeft" : 810.0,
+      "locationTop" : 360.0,
+      "outputVariables" : "[{\"name\":\"owner_name\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"owner_id\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"owner_type\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86490,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JMESPath v2.0",
+        "displayName" : "JMESPath",
+        "programVersion" : "2.0.5"
+      },
+      "name" : "Get Owner Details by Name",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_expressions"
+        },
+        "value" : "[{\"key\":\"owner_name_by_name\",\"value\":\"data.owner[?name \\u003d\\u003d \\u0027#App:86495:owner_input!String\\u0027].name | [0]\"},{\"key\":\"owner_type_by_name\",\"value\":\"data.owner[?name \\u003d\\u003d \\u0027#App:86495:owner_input!String\\u0027].type | [0]\"},{\"key\":\"owner_id_by_name\",\"value\":\"data.owner[?name \\u003d\\u003d \\u0027#App:86495:owner_input!String\\u0027].id | [0]\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "json_data"
+        },
+        "value" : "#App:86491:tc.api.result!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "strip_quotes"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_array_expressions"
+        },
+        "value" : "[]"
+      } ],
+      "locationLeft" : 560.0,
+      "locationTop" : 360.0,
+      "outputVariables" : "[{\"name\":\"owner_name_by_name\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"owner_type_by_name\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"owner_id_by_name\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86494,
+      "appCatalogItem" : {
+        "programName" : "TCPB - RegexExtract v1.0",
+        "displayName" : "Regex Extract",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Owner Name or ID Given?",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_content"
+        },
+        "value" : "#Trigger:9781:owner_input!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "strip_nulls"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "capture_groups"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "regex_pattern_mapping"
+        },
+        "value" : "[{\"key\":\"owner_id\",\"value\":\"^\\\\d+$\"}]"
+      } ],
+      "locationLeft" : 330.0,
+      "locationTop" : 330.0
+    }, {
+      "id" : 86495,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Get Owners Input",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"owner_input\",\"value\":\"#Trigger:9781:owner_input!String\"}]"
+      } ],
+      "locationLeft" : 80.0,
+      "locationTop" : 370.0,
+      "outputVariables" : "[{\"name\":\"owner_input\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86496,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JMESPath v2.0",
+        "displayName" : "JMESPath",
+        "programVersion" : "2.0.5"
+      },
+      "name" : "Get Owner Details by ID",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_expressions"
+        },
+        "value" : "[{\"key\":\"owner_name_by_id\",\"value\":\"data.owner[?id \\u003d\\u003d `#Trigger:9781:owner_input!String`].name | [0]\"},{\"key\":\"owner_type_by_id\",\"value\":\"data.owner[?id \\u003d\\u003d `#Trigger:9781:owner_input!String`].type | [0]\"},{\"key\":\"owner_id_by_id\",\"value\":\"data.owner[?id \\u003d\\u003d `#Trigger:9781:owner_input!String`].id | [0]\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "json_data"
+        },
+        "value" : "#App:86491:tc.api.result!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_array_expressions"
+        },
+        "value" : "[]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "strip_quotes"
+        },
+        "value" : "true"
+      } ],
+      "locationLeft" : 560.0,
+      "locationTop" : 270.0,
+      "outputVariables" : "[{\"name\":\"owner_name_by_id\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"owner_id_by_id\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"owner_type_by_id\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86491,
+      "appCatalogItem" : {
+        "programName" : "TCPB - TC Api v1.0",
+        "displayName" : "ThreatConnect API",
+        "programVersion" : "1.0.6"
+      },
+      "name" : "Get All Owners from API",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "method"
+        },
+        "value" : "GET"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "path"
+        },
+        "value" : "/v2/owners"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "headers"
+        },
+        "value" : "[]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "body"
+        }
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "query_params"
+        },
+        "value" : "[]"
+      } ],
+      "locationLeft" : 80.0,
+      "locationTop" : 280.0,
+      "outputVariables" : "[{\"name\":\"tc.api.result\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86492,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "ℹ️ About",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"filters\",\"value\":\"See this ThreatConnect documentation on filtering Indicators. These are the filter that can be passed.\\n\\n\\nhttps://docs.threatconnect.com/en/latest/rest_api/indicators/indicators.html#filtering-indicators\"}]"
+      } ],
+      "locationLeft" : 80.0,
+      "locationTop" : 20.0
+    }, {
+      "id" : 86485,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JMESPath v2.0",
+        "displayName" : "JMESPath",
+        "programVersion" : "2.0.5"
+      },
+      "name" : "Get Details by Dropwdown",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_expressions"
+        },
+        "value" : "[{\"key\":\"owner_name_by_name\",\"value\":\"data.owner[?name \\u003d\\u003d \\u0027#Trigger:9781:owner_dropdown!String\\u0027].name | [0]\"},{\"key\":\"owner_type_by_name\",\"value\":\"data.owner[?name \\u003d\\u003d \\u0027#Trigger:9781:owner_dropdown!String\\u0027].type | [0]\"},{\"key\":\"owner_id_by_name\",\"value\":\"data.owner[?name \\u003d\\u003d \\u0027#Trigger:9781:owner_dropdown!String\\u0027].id | [0]\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_array_expressions"
+        },
+        "value" : "[]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "strip_quotes"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "json_data"
+        },
+        "value" : "#App:86491:tc.api.result!String"
+      } ],
+      "locationLeft" : 560.0,
+      "locationTop" : 460.0,
+      "outputVariables" : "[{\"name\":\"owner_name_by_name\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"owner_type_by_name\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"owner_id_by_name\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86487,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Params without Filters",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"without_filters\",\"value\":\"resultLimit\\u003d10000\\u0026includeAdditional\\u003dtrue\\u0026owner\\u003d#App:86484:encode_url.output!String\"}]"
+      } ],
+      "locationLeft" : 1260.0,
+      "locationTop" : 490.0,
+      "outputVariables" : "[{\"name\":\"without_filters\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86497,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "💬 Changelog",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"SEP_12_2019\",\"value\":\"created\"}]"
+      } ],
+      "locationLeft" : 80.0,
+      "locationTop" : 110.0
+    }, {
+      "id" : 86493,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Get TC Domain",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86481:tc.webLink!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "^.*:\\/\\/(.*?)\\/.*$"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "$1"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      } ],
+      "locationLeft" : 1680.0,
+      "locationTop" : 650.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86488,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Params with Filters",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"with_filters\",\"value\":\"?resultLimit\\u003d10000\\u0026includeAdditional\\u003dtrue\\u0026owner\\u003d#App:86484:encode_url.output!String\\u0026filters\\u003d#App:86486:encode_url.output!String\"}]"
+      } ],
+      "locationLeft" : 1260.0,
+      "locationTop" : 400.0,
+      "outputVariables" : "[{\"name\":\"with_filters\",\"type\":\"String\",\"loopVariables\":false}]"
+    } ],
+    "playbookConnectionList" : [ {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86495,
+      "targetJobId" : 86485
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86485,
+      "targetJobId" : 86489
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86490,
+      "targetJobId" : 86489
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86494,
+      "targetJobId" : 86490
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86494,
+      "targetJobId" : 86496
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86495,
+      "targetJobId" : 86494
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86491,
+      "targetJobId" : 86495
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "targetJobId" : 86491,
+      "sourceTriggerId" : 9781
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "targetJobId" : 86492,
+      "sourceTriggerId" : 9781
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86492,
+      "targetJobId" : 86497
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86480,
+      "targetJobId" : 86486
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86484,
+      "targetJobId" : 86480
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86482,
+      "targetJobId" : 86481
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86496,
+      "targetJobId" : 86489
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86489,
+      "targetJobId" : 86484
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86486,
+      "targetJobId" : 86488
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86486,
+      "targetJobId" : 86487
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86488,
+      "targetJobId" : 86483
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86487,
+      "targetJobId" : 86483
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86483,
+      "targetJobId" : 86482
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86481,
+      "targetJobId" : 86493
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : true,
+      "sourceJobId" : 86493,
+      "targetTriggerId" : 9781
+    } ],
+    "playbookTriggerList" : [ {
+      "id" : 9781,
+      "name" : "Component Trigger",
+      "type" : "PipeConfig",
+      "eventType" : "External",
+      "locationLeft" : -180.0,
+      "locationTop" : 280.0,
+      "anyOrg" : true,
+      "playbookTriggerFilterList" : [ ],
+      "outputVariables" : "[{\"name\":\"filters\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"owner_input\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"owner_dropdown\",\"type\":\"String\",\"loopVariables\":false}]",
+      "pipeInputParams" : "[{\"label\":\"Owner\",\"dataType\":\"Choice\",\"playbookDataType\":\"String\",\"required\":false,\"name\":\"owner_dropdown\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${OWNERS}\"]},{\"label\":\"Owner Variable (optional)\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":false,\"name\":\"owner_input\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${TEXT}\"]},{\"label\":\"Filters (optional)\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":false,\"name\":\"filters\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${TEXT}\"]}]",
+      "pipeOutputParams" : "[{\"key\":\"all\",\"value\":\"#App:86481:all!String \",\"displayValue\":\"#App:86481:all!String \"},{\"key\":\"addresses\",\"value\":\"#App:86481:addresses!String \",\"displayValue\":\"#App:86481:addresses!String \"},{\"key\":\"hosts\",\"value\":\"#App:86481:hosts!String \",\"displayValue\":\"#App:86481:hosts!String \"},{\"key\":\"files\",\"value\":\"#App:86481:files!String \",\"displayValue\":\"#App:86481:files!String \"},{\"key\":\"all\",\"value\":\"#App:86481:all!StringArray \",\"displayValue\":\"#App:86481:all!StringArray \"},{\"key\":\"addresses\",\"value\":\"#App:86481:addresses!StringArray \",\"displayValue\":\"#App:86481:addresses!StringArray \"},{\"key\":\"hosts\",\"value\":\"#App:86481:hosts!StringArray \",\"displayValue\":\"#App:86481:hosts!StringArray \"},{\"key\":\"files\",\"value\":\"#App:86481:files!StringArray \",\"displayValue\":\"#App:86481:files!StringArray \"},{\"key\":\"raw_json\",\"value\":\"#App:86482:tc.api.result!String \",\"displayValue\":\"#App:86482:tc.api.result!String \"},{\"key\":\"owner_name\",\"value\":\"#App:86489:owner_name!String \",\"displayValue\":\"#App:86489:owner_name!String \"},{\"key\":\"owner_type\",\"value\":\"#App:86489:owner_type!String \",\"displayValue\":\"#App:86489:owner_type!String \"},{\"key\":\"owner_id\",\"value\":\"#App:86489:owner_id!String \",\"displayValue\":\"#App:86489:owner_id!String \"},{\"key\":\"tc_domain\",\"value\":\"#App:86493:find_replace.output!String \",\"displayValue\":\"#App:86493:find_replace.output!String \"}]"
+    } ],
+    "playbookLabels" : [ {
+      "playbookLabelType" : {
+        "label" : "⬢ CB Response"
+      }
+    }, {
+      "playbookLabelType" : {
+        "label" : "⬢ CB ThreatHunter"
+      }
+    } ]
+  }, {
+    "definitionVersion" : "350fa9b80d39761edc2113b0a47a92cf",
+    "name" : "⬢ Carbon Black Reports",
+    "type" : "Pipe",
+    "panX" : 395.0,
+    "panY" : 20.0,
+    "logLevel" : "WARN",
+    "description" : "This component will generate a Report for CB Response or CB ThreatHunter feeds endpoint based on ThreatConnect's indicator JSON as an input.",
+    "version" : "1.160",
+    "comment" : "Auto-Saved on Wed Oct 02 21:23:13 UTC 2019",
+    "jobList" : [ {
+      "id" : 86475,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️ Reports",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"reports\",\"value\":\"#App:86444:find_replace.output!String #App:86476:find_replace.output!String\"}]"
+      } ],
+      "locationLeft" : 2410.0,
+      "locationTop" : 270.0,
+      "outputVariables" : "[{\"name\":\"reports\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86444,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Fix Response Query",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86445:find_replace.output!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "\"search_query\": \"cb.urlver=1&q=$1\" }"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\"search_query\": \"(.*?)\"\\s?\\}"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      } ],
+      "locationLeft" : 2170.0,
+      "locationTop" : 230.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86445,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Fix Response Severity",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86478:find_replace.output!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "\"score\": \"$1\","
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\"severity\": (\\d+),"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      } ],
+      "locationLeft" : 2170.0,
+      "locationTop" : 140.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86477,
+      "appCatalogItem" : {
+        "programName" : "If / Else",
+        "displayName" : "If / Else",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Response?",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "operand_1"
+        },
+        "value" : "#Trigger:9780:cb.product!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "operand_2"
+        },
+        "value" : "Response"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_numeric"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "operator"
+        },
+        "value" : "equals"
+      } ],
+      "locationLeft" : 2020.0,
+      "locationTop" : 270.0
+    }, {
+      "id" : 86446,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Clean Process Value",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86447:find_replace.output!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "\"events\""
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\"Process\""
+      } ],
+      "locationLeft" : 1740.0,
+      "locationTop" : 490.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86447,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Fix Severity",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86448:find_replace.output!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "\"severity\": 1"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\"severity\": null"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      } ],
+      "locationLeft" : 1740.0,
+      "locationTop" : 400.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86448,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Fix Descriptions",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86463:find_replace.output!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "\"description\": \"No description set\""
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\"description\": null"
+      } ],
+      "locationLeft" : 1740.0,
+      "locationTop" : 310.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86463,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Fix Titles",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86464:find_replace.output!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "\"title\": \"No title\""
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\"title\": null"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      } ],
+      "locationLeft" : 1740.0,
+      "locationTop" : 220.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86464,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Clean Template 2",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86465:find_replace.output!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\\}\\s?\\{"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "}, {"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      } ],
+      "locationLeft" : 1740.0,
+      "locationTop" : 130.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86465,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Clean Template 1",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86467:template!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\\s?<VARIABLE_NOT_FOUND>\\s?|\\s?\"tags\":  null,"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : ""
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      } ],
+      "locationLeft" : 1740.0,
+      "locationTop" : 40.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86452,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️ Addresses",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"addresses\",\"value\":\"#App:86451:find_replace.output!String\"}]"
+      } ],
+      "locationLeft" : 1300.0,
+      "locationTop" : 200.0,
+      "outputVariables" : "[{\"name\":\"addresses\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86471,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JMESPath v2.0",
+        "displayName" : "JMESPath",
+        "programVersion" : "2.0.5"
+      },
+      "name" : "Trim Address Data",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "json_data"
+        },
+        "value" : "#Trigger:9780:address.json!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_array_expressions"
+        },
+        "value" : "[{\"key\":\"addresses\",\"value\":\"data.*[?type \\u003d\\u003d \\u0027Address\\u0027][id,description,confidence,webLink,{tags: tag[].name},summary] | [0]\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_expressions"
+        },
+        "value" : "[]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "strip_quotes"
+        },
+        "value" : "true"
+      } ],
+      "locationLeft" : 440.0,
+      "locationTop" : 200.0,
+      "outputVariables" : "[{\"name\":\"addresses\",\"type\":\"StringArray\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86478,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Clean Binary Value",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86446:find_replace.output!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "\"modules\""
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\"Binary\""
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      } ],
+      "locationLeft" : 1740.0,
+      "locationTop" : 580.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86466,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️ MD5s",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"md5s\",\"value\":\"#App:86454:find_replace.output!String\"}]"
+      } ],
+      "locationLeft" : 1300.0,
+      "locationTop" : 80.0,
+      "outputVariables" : "[{\"name\":\"md5s\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86450,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️ Queries",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"queries\",\"value\":\"#App:86474:find_replace.output!String\"}]"
+      } ],
+      "locationLeft" : 1300.0,
+      "locationTop" : 450.0,
+      "outputVariables" : "[{\"name\":\"queries\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86449,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️ Hosts",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"hosts\",\"value\":\"#App:86453:find_replace.output!String\"}]"
+      } ],
+      "locationLeft" : 1300.0,
+      "locationTop" : 320.0,
+      "outputVariables" : "[{\"name\":\"hosts\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86454,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Update MD5s",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "{\"id\": \"tc-$1\", \"timestamp\": #App:86469:find_replace.output!String, \"title\": $6, \"description\": $2, \"severity\": $3, \"link\": $4, \"tags\": $5, \"iocs\": { \"md5\": [$6] }, \"visibility\": \"private\" }"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86461:joined_md5s!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\\[(\\d+), (\".*?\"|null), (.*?), (.*?), \\{\"tags\":(.*?)\\}, (.*?)\\]"
+      } ],
+      "locationLeft" : 1080.0,
+      "locationTop" : 40.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86451,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Update Addresses",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86462:joined_addresses!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "{\"id\": \"tc-$1\", \"timestamp\": #App:86469:find_replace.output!String, \"title\": $6, \"description\": $2, \"severity\": $3, \"link\": $4, \"tags\": $5, \"iocs\": { \"ipv4\": [$6] }, \"visibility\": \"private\" }"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\\[(\\d+), (\".*?\"|null), (.*?), (.*?), \\{\"tags\":(.*?)\\}, (.*?)\\]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      } ],
+      "locationLeft" : 1080.0,
+      "locationTop" : 160.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86479,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Clean MD5s",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86461:joined_md5s!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\\n|\\r|\\\\n|\\\\r"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : ""
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      } ],
+      "locationLeft" : 870.0,
+      "locationTop" : 40.0
+    }, {
+      "id" : 86457,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Clean Addresses",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86462:joined_addresses!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : ""
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\\n|\\r|\\\\n|\\\\r"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      } ],
+      "locationLeft" : 870.0,
+      "locationTop" : 160.0
+    }, {
+      "id" : 86455,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Clean Queries",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86468:joined_queries!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\"query_type\":\\s?\\[(.*?)\\]\\}, \\{\"cb_query\":\\s?\\[(.*?)\\]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "\"query_type\": $1}, {\"cb_query\": $2"
+      } ],
+      "locationLeft" : 870.0,
+      "locationTop" : 410.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86456,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Clean Hosts",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86460:joined_hosts!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\\n|\\r|\\\\n|\\\\r"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : ""
+      } ],
+      "locationLeft" : 870.0,
+      "locationTop" : 280.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86461,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JoinArray v1.0",
+        "displayName" : "Join Array",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Join MD5s",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "array_mapping"
+        },
+        "value" : "[{\"key\":\"joined_md5s\",\"value\":\"#App:86473:md5s!StringArray\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "delimiter"
+        },
+        "value" : ","
+      } ],
+      "locationLeft" : 660.0,
+      "locationTop" : 40.0,
+      "outputVariables" : "[{\"name\":\"joined_md5s\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86468,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JoinArray v1.0",
+        "displayName" : "Join Array",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Join Queries",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "array_mapping"
+        },
+        "value" : "[{\"key\":\"joined_queries\",\"value\":\"#App:86458:queries!StringArray\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "delimiter"
+        },
+        "value" : ","
+      } ],
+      "locationLeft" : 660.0,
+      "locationTop" : 410.0,
+      "outputVariables" : "[{\"name\":\"joined_queries\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86460,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JoinArray v1.0",
+        "displayName" : "Join Array",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Join Hosts",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "array_mapping"
+        },
+        "value" : "[{\"key\":\"joined_hosts\",\"value\":\"#App:86470:hosts!StringArray\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "delimiter"
+        },
+        "value" : ","
+      } ],
+      "locationLeft" : 660.0,
+      "locationTop" : 280.0,
+      "outputVariables" : "[{\"name\":\"joined_hosts\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86462,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JoinArray v1.0",
+        "displayName" : "Join Array",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Join Addresses",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "array_mapping"
+        },
+        "value" : "[{\"key\":\"joined_addresses\",\"value\":\"#App:86471:addresses!StringArray\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "delimiter"
+        },
+        "value" : ","
+      } ],
+      "locationLeft" : 660.0,
+      "locationTop" : 160.0,
+      "outputVariables" : "[{\"name\":\"joined_addresses\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86467,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Template",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"template\",\"value\":\"#App:86466:md5s!String #App:86452:addresses!String #App:86449:hosts!String #App:86450:queries!String\"}]"
+      } ],
+      "locationLeft" : 1480.0,
+      "locationTop" : 190.0,
+      "outputVariables" : "[{\"name\":\"template\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86469,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Convert Timestamp",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#Global:0:gbl.timestamp.epoch!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "$1"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "^(\\d{10}).*"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      } ],
+      "locationLeft" : 190.0,
+      "locationTop" : 230.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86459,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "💬 Changelog",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"on_02.08.19\",\"value\":\"Updated queries regex to pull `null` values.\"},{\"key\":\"on_13.08.19\",\"value\":\"Updated queries regex to correctly filter `events` vs `modules` query types.\"},{\"key\":\"on_21.08.19\",\"value\":\"Added F\\u0026R to remove newlines in indicator descriptions.\"},{\"key\":\"on_03.09.19\",\"value\":\"Updated validation rule for CB Query to show \\\"Process\\\" and \\\"Binary\\\" instead of \\\"events\\\" and \\\"modules\\\". Added F\\u0026R at the end of the flow to update values accordingly.\"},{\"key\":\"on_03.09.19\",\"value\":\"Updated regex for updating indicators. Now handles commas in descriptions.\"}]"
+      } ],
+      "locationLeft" : 310.0,
+      "locationTop" : -60.0
+    }, {
+      "id" : 86470,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JMESPath v2.0",
+        "displayName" : "JMESPath",
+        "programVersion" : "2.0.5"
+      },
+      "name" : "Trim Host Data",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "json_data"
+        },
+        "value" : "#Trigger:9780:host.json!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_array_expressions"
+        },
+        "value" : "[{\"key\":\"hosts\",\"value\":\"data.*[?type \\u003d\\u003d \\u0027Host\\u0027][id,description,confidence,webLink,{tags: tag[].name},summary] | [0]\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "strip_quotes"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_expressions"
+        },
+        "value" : "[]"
+      } ],
+      "locationLeft" : 440.0,
+      "locationTop" : 320.0,
+      "outputVariables" : "[{\"name\":\"hosts\",\"type\":\"StringArray\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86473,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JMESPath v2.0",
+        "displayName" : "JMESPath",
+        "programVersion" : "2.0.5"
+      },
+      "name" : "Trim MD5 Data",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "json_data"
+        },
+        "value" : "#Trigger:9780:md5.json!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "strip_quotes"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_array_expressions"
+        },
+        "value" : "[{\"key\":\"md5s\",\"value\":\"data.*[?type \\u003d\\u003d \\u0027File\\u0027][id,description,confidence,webLink,{tags: tag[].name},summary] | [0]\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_expressions"
+        },
+        "value" : "[]"
+      } ],
+      "locationLeft" : 440.0,
+      "locationTop" : 80.0,
+      "outputVariables" : "[{\"name\":\"md5s\",\"type\":\"StringArray\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86453,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Update Hosts",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86456:find_replace.output!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "{\"id\": \"tc-$1\", \"timestamp\": #App:86469:find_replace.output!String, \"title\": $6, \"description\": $2, \"severity\": $3, \"link\": $4, \"tags\": $5, \"iocs\": { \"dns\": [$6] }, \"visibility\": \"private\" }"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\\[(\\d+), (\".*?\"|null), (.*?), (.*?), \\{\"tags\":(.*?)\\}, (.*?)\\]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      } ],
+      "locationLeft" : 1080.0,
+      "locationTop" : 280.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86474,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Update Queries",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86455:find_replace.output!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "{\"id\": \"tc-$1\", \"timestamp\": #App:86469:find_replace.output!String, \"title\": \"$2\", \"description\": $3, \"severity\": $4, \"link\": $6, \"tags\": $7, \"iocs\": { \"query\": [{ \"index_type\": $8, \"search_query\": $9 }]}, \"visibility\": \"private\" }"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\\[(?<id>\\d+),\\s?\"CB-(?<name>.*?)\",\\s?(?<description>\".*?\"|null),\\s?(?<confidence>\\d+|null),\\s?(?<rating>\\d.*?|null),\\s?(?<weblink>\".*?\"),.*?\"tags\":\\s?(?<tags>\\[.*?\\]|null)\\}.*?\"query_type\":\\s?(?<type>\".*?\"|null).*?\"cb_query\":\\s?(?<query>\".*?\"|null)\\s?\\}\\s?\\]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      } ],
+      "locationLeft" : 1080.0,
+      "locationTop" : 410.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86472,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "ℹ️  About",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"author\",\"value\":\"Ryan Fortress (rfortress@carbonblack.com)\"},{\"key\":\"description\",\"value\":\"This Component is designed to parse the JSON response from the ThreatConnect api `/v2/indicators` endpoint. It will process the traditional indicators and custom **CB Queries** indicators.\\n\\nIt returns JSON properly formatted for Carbon Black reports for either CB Response or CB ThreatHunter.\"},{\"key\":\"regex_sample\",\"value\":\"This was the regex that was used to parse the CB Query indicators into reports:\\n\\nhttps://regex101.com/r/ipUza0/2\"}]"
+      } ],
+      "locationLeft" : 310.0,
+      "locationTop" : -150.0
+    }, {
+      "id" : 86458,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JMESPath v2.0",
+        "displayName" : "JMESPath",
+        "programVersion" : "2.0.5"
+      },
+      "name" : "Trim Query Data",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "json_data"
+        },
+        "value" : "#Trigger:9780:query.json!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_expressions"
+        },
+        "value" : "[]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_array_expressions"
+        },
+        "value" : "[{\"key\":\"queries\",\"value\":\"data.*[?type \\u003d\\u003d \\u0027CB Watchlist\\u0027][id,summary,description,confidence,rating,webLink,{tags: tag[].name},{query_type: attribute[?type \\u003d\\u003d \\u0027CB Query Type\\u0027][value][0]},{cb_query: attribute[?type \\u003d\\u003d \\u0027CB Query\\u0027][value][0]}] | [0]\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "strip_quotes"
+        },
+        "value" : "true"
+      } ],
+      "locationLeft" : 440.0,
+      "locationTop" : 450.0,
+      "outputVariables" : "[{\"name\":\"queries\",\"type\":\"StringArray\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86476,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Fix ThreatHunter Score",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86478:find_replace.output!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\"severity\": (\\d{1,2})\\d{1,2}?,"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "\"severity\": $1,"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      } ],
+      "locationLeft" : 2170.0,
+      "locationTop" : 350.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    } ],
+    "playbookConnectionList" : [ {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86448,
+      "targetJobId" : 86447
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86472,
+      "targetJobId" : 86459
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86444,
+      "targetJobId" : 86475
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86445,
+      "targetJobId" : 86444
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86478,
+      "targetJobId" : 86477
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86446,
+      "targetJobId" : 86478
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86447,
+      "targetJobId" : 86446
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86457,
+      "targetJobId" : 86451
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86462,
+      "targetJobId" : 86457
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86479,
+      "targetJobId" : 86454
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86461,
+      "targetJobId" : 86479
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86456,
+      "targetJobId" : 86453
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86460,
+      "targetJobId" : 86456
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "targetJobId" : 86469,
+      "sourceTriggerId" : 9780
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86469,
+      "targetJobId" : 86458
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86458,
+      "targetJobId" : 86468
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86469,
+      "targetJobId" : 86473
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86473,
+      "targetJobId" : 86461
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86469,
+      "targetJobId" : 86471
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86471,
+      "targetJobId" : 86462
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86454,
+      "targetJobId" : 86466
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86451,
+      "targetJobId" : 86452
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86474,
+      "targetJobId" : 86450
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86466,
+      "targetJobId" : 86467
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86452,
+      "targetJobId" : 86467
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86450,
+      "targetJobId" : 86467
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86469,
+      "targetJobId" : 86470
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86470,
+      "targetJobId" : 86460
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86453,
+      "targetJobId" : 86449
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86449,
+      "targetJobId" : 86467
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86471,
+      "targetJobId" : 86452
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86458,
+      "targetJobId" : 86450
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86470,
+      "targetJobId" : 86449
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86473,
+      "targetJobId" : 86466
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86467,
+      "targetJobId" : 86465
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86463,
+      "targetJobId" : 86448
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86477,
+      "targetJobId" : 86445
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86477,
+      "targetJobId" : 86476
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86476,
+      "targetJobId" : 86475
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : true,
+      "sourceJobId" : 86475,
+      "targetTriggerId" : 9780
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86465,
+      "targetJobId" : 86464
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86464,
+      "targetJobId" : 86463
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "targetJobId" : 86472,
+      "sourceTriggerId" : 9780
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86468,
+      "targetJobId" : 86455
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86455,
+      "targetJobId" : 86474
+    } ],
+    "playbookTriggerList" : [ {
+      "id" : 9780,
+      "name" : "Component Trigger",
+      "type" : "PipeConfig",
+      "eventType" : "External",
+      "locationLeft" : 50.0,
+      "locationTop" : 70.0,
+      "anyOrg" : true,
+      "playbookTriggerFilterList" : [ ],
+      "outputVariables" : "[{\"name\":\"md5.json\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"address.json\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"cb.product\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"query.json\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"host.json\",\"type\":\"String\",\"loopVariables\":false}]",
+      "pipeInputParams" : "[{\"label\":\"Product\",\"dataType\":\"Choice\",\"playbookDataType\":\"String\",\"required\":true,\"name\":\"cb.product\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"ThreatHunter\",\"Response\"]},{\"label\":\"MD5 JSON\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":false,\"name\":\"md5.json\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[]},{\"label\":\"Address JSON\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":false,\"name\":\"address.json\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[]},{\"label\":\"Host JSON\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":false,\"name\":\"host.json\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[]},{\"label\":\"CB Query JSON\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":false,\"name\":\"query.json\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[]}]",
+      "pipeOutputParams" : "[{\"key\":\"reports\",\"value\":\"[#App:86475:reports!String]\",\"displayValue\":\"[#App:86475:reports!String]\"}]"
+    } ],
+    "playbookLabels" : [ {
+      "playbookLabelType" : {
+        "label" : "⬢ CB Response"
+      }
+    }, {
+      "playbookLabelType" : {
+        "label" : "⬢ CB ThreatHunter"
+      }
+    } ]
+  }, {
+    "definitionVersion" : "d2c9607c65bb0d060da2bf1bd6339594",
+    "name" : "⬢ Carbon Black Report (Bulk)",
+    "type" : "Pipe",
+    "panX" : 20.0,
+    "panY" : 20.0,
+    "logLevel" : "WARN",
+    "description" : "This Component generates a report for a Carbon Black feed in bulk form. This means one report per indicator type, not one report per indicator.",
+    "version" : "1.69",
+    "comment" : "Auto-Saved on Wed Oct 02 21:34:21 UTC 2019",
+    "jobList" : [ {
+      "id" : 86498,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Clean Template 2",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : ",\\s?(}|\\])"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86499:find_replace.output!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "$1"
+      } ],
+      "locationLeft" : 2080.0,
+      "locationTop" : 330.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86499,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Clean Template 1",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86500:template!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : ""
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\"(?:md5|ipv4|ipv6|dns)\":\\s?(?:\\[\"{2,}]|\\[\\]),?"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      } ],
+      "locationLeft" : 2090.0,
+      "locationTop" : 240.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86500,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️ Template",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"template\",\"value\":\"#App:86501:find_replace.output!String #App:86512:find_replace.output!String\"}]"
+      } ],
+      "locationLeft" : 1940.0,
+      "locationTop" : 240.0,
+      "outputVariables" : "[{\"name\":\"template\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86502,
+      "appCatalogItem" : {
+        "programName" : "If / Else",
+        "displayName" : "If / Else",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Response?",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "operand_1"
+        },
+        "value" : "#Trigger:9782:cb.product!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_numeric"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "operator"
+        },
+        "value" : "equals"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "operand_2"
+        },
+        "value" : "response"
+      } ],
+      "locationLeft" : 1540.0,
+      "locationTop" : 210.0
+    }, {
+      "id" : 86504,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️ md5s",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"md5s\",\"value\":\"#App:86511:md5s!String #App:86506:no_md5!String\"}]"
+      } ],
+      "locationLeft" : 1040.0,
+      "locationTop" : 190.0,
+      "outputVariables" : "[{\"name\":\"md5s\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86519,
+      "appCatalogItem" : {
+        "programName" : "TCPB - RegexExtract v1.0",
+        "displayName" : "Regex Extract",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Filter IPv4s",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_content"
+        },
+        "value" : "\"#App:86515:addresses!String\""
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "capture_groups"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "regex_pattern_mapping"
+        },
+        "value" : "[{\"key\":\"addresses\",\"value\":\"(\\\"\\\\d{1,3}\\\\.\\\\d{1,3}\\\\.\\\\d{1,3}\\\\.\\\\d{1,3}\\\")\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "strip_nulls"
+        },
+        "value" : "true"
+      } ],
+      "locationLeft" : 590.0,
+      "locationTop" : 350.0,
+      "outputVariables" : "[{\"name\":\"addresses\",\"type\":\"StringArray\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86505,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️ Domains",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"dns\",\"value\":\"#App:86516:dns!String #App:86518:no_dns!String\"}]"
+      } ],
+      "locationLeft" : 1040.0,
+      "locationTop" : 690.0,
+      "outputVariables" : "[{\"name\":\"dns\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86511,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JoinArray v1.0",
+        "displayName" : "Join Array",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Join md5s",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "array_mapping"
+        },
+        "value" : "[{\"key\":\"md5s\",\"value\":\"#Trigger:9782:cb.report.md5!StringArray\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "delimiter"
+        },
+        "value" : "\",\""
+      } ],
+      "locationLeft" : 360.0,
+      "locationTop" : 190.0,
+      "outputVariables" : "[{\"name\":\"md5s\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86515,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JoinArray v1.0",
+        "displayName" : "Join Array",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Join Addresses",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "array_mapping"
+        },
+        "value" : "[{\"key\":\"addresses\",\"value\":\"#Trigger:9782:cb.report.ip!StringArray\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "delimiter"
+        },
+        "value" : "\",\""
+      } ],
+      "locationLeft" : 360.0,
+      "locationTop" : 350.0,
+      "outputVariables" : "[{\"name\":\"addresses\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86514,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "No IPv4s",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"no_ipv4\",\"value\":\"\\\"\\\"\"}]"
+      } ],
+      "locationLeft" : 810.0,
+      "locationTop" : 410.0,
+      "outputVariables" : "[{\"name\":\"no_ipv4\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86513,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Changelog",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"SEP_10_2019\",\"value\":\"Updated regex for \\\"Join IPv4s\\\". It wasn\\u0027t parsing the first and last IP in the list due to missing quotes.\"}]"
+      } ],
+      "locationLeft" : 590.0,
+      "locationTop" : 10.0
+    }, {
+      "id" : 86518,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "No Domains",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"no_dns\",\"value\":\"\\\"\\\"\"}]"
+      } ],
+      "locationLeft" : 590.0,
+      "locationTop" : 710.0,
+      "outputVariables" : "[{\"name\":\"no_dns\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86503,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Report Templates",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"threathunter\",\"value\":\"{\\\"id\\\": \\\"#Trigger:9782:cb.report.id!String\\\",\\\"timestamp\\\": #App:86508:find_replace.output!String,\\\"title\\\": \\\"#Trigger:9782:cb.report.title!String\\\",\\\"description\\\": \\\"#Trigger:9782:cb.report.description!String\\\",\\\"severity\\\": \\\"#Trigger:9782:cb.report.severity!String\\\",\\\"link\\\": \\\"#Trigger:9782:cb.report.link!String\\\",\\\"iocs\\\": {\\\"md5\\\": [\\\"#App:86504:md5s!String\\\"],\\\"ipv4\\\": [#App:86509:ipv4s!String],\\\"ipv6\\\": [#App:86521:ipv6s!String],\\\"dns\\\": [\\\"#App:86505:dns!String\\\"]}}\"},{\"key\":\"response\",\"value\":\"{\\\"id\\\": \\\"tc-#App:86508:find_replace.output!String\\\",\\\"timestamp\\\": #App:86508:find_replace.output!String,\\\"title\\\": \\\"#Trigger:9782:cb.report.title!String\\\",\\\"description\\\": \\\"#Trigger:9782:cb.report.description!String\\\",\\\"score\\\": \\\"#Trigger:9782:cb.report.severity!String\\\" ,\\\"link\\\": \\\"#Trigger:9782:cb.report.link!String\\\",\\\"iocs\\\": {\\\"md5\\\": [\\\"#App:86504:md5s!String\\\"],\\\"ipv4\\\": [#App:86509:ipv4s!String],\\\"ipv6\\\": [#App:86521:ipv6s!String],\\\"dns\\\": [\\\"#App:86505:dns!String\\\"]}, \\\"visibility\\\": \\\"private\\\"}\"}]"
+      } ],
+      "locationLeft" : 1270.0,
+      "locationTop" : 270.0,
+      "outputVariables" : "[{\"name\":\"threathunter\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"response\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86508,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Convert Timestamp",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#Global:0:gbl.timestamp.epoch!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : "$1"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "^(\\d{10}).*"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      } ],
+      "locationLeft" : 1270.0,
+      "locationTop" : 180.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86509,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️ IPv4s",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"ipv4s\",\"value\":\"#App:86517:ipv4!String #App:86514:no_ipv4!String #App:86520:no_addresses!String\"}]"
+      } ],
+      "locationLeft" : 1040.0,
+      "locationTop" : 360.0,
+      "outputVariables" : "[{\"name\":\"ipv4s\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86521,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️ IPv6s",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"ipv6s\",\"value\":\"#App:86510:find_replace.output!String #App:86520:no_addresses!String\"}]"
+      } ],
+      "locationLeft" : 1040.0,
+      "locationTop" : 500.0,
+      "outputVariables" : "[{\"name\":\"ipv6s\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86506,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "No md5s",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"no_md5\",\"value\":\"\\\"\\\"\"}]"
+      } ],
+      "locationLeft" : 810.0,
+      "locationTop" : 210.0,
+      "outputVariables" : "[{\"name\":\"no_md5\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86507,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "About",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"author\",\"value\":\"Ryan Fortress (rfortress@carbonblack.com)\"}]"
+      } ],
+      "locationLeft" : 360.0,
+      "locationTop" : 10.0
+    }, {
+      "id" : 86510,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Filter IPv6s",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "\"#App:86515:addresses!String\""
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        }
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\"\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\"(?:,|$)"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      } ],
+      "locationLeft" : 590.0,
+      "locationTop" : 500.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86517,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JoinArray v1.0",
+        "displayName" : "Join Array",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Join IPv4s",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "array_mapping"
+        },
+        "value" : "[{\"key\":\"ipv4\",\"value\":\"#App:86519:addresses!StringArray\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "delimiter"
+        },
+        "value" : ","
+      } ],
+      "locationLeft" : 810.0,
+      "locationTop" : 320.0,
+      "outputVariables" : "[{\"name\":\"ipv4\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86516,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JoinArray v1.0",
+        "displayName" : "Join Array",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Join Domains",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "array_mapping"
+        },
+        "value" : "[{\"key\":\"dns\",\"value\":\"#Trigger:9782:cb.report.dns!StringArray\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "delimiter"
+        },
+        "value" : "\",\""
+      } ],
+      "locationLeft" : 360.0,
+      "locationTop" : 690.0,
+      "outputVariables" : "[{\"name\":\"dns\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86520,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "No Addresses",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"no_addresses\",\"value\":\"\\\"\\\"\"}]"
+      } ],
+      "locationLeft" : 570.0,
+      "locationTop" : 600.0,
+      "outputVariables" : "[{\"name\":\"no_addresses\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86501,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Clean Response Template",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86503:response!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\\n|<VARIABLE_NOT_FOUND>"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : ""
+      } ],
+      "locationLeft" : 1690.0,
+      "locationTop" : 190.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86512,
+      "appCatalogItem" : {
+        "programName" : "Find / Replace",
+        "displayName" : "Find and Replace",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Clean ThreatHunter Template",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "input_text"
+        },
+        "value" : "#App:86503:threathunter!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "replace_regex"
+        },
+        "value" : ""
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "find_regex"
+        },
+        "value" : "\\n|<VARIABLE_NOT_FOUND>"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_regex"
+        },
+        "value" : "true"
+      } ],
+      "locationLeft" : 1690.0,
+      "locationTop" : 280.0,
+      "outputVariables" : "[{\"name\":\"find_replace.output\",\"type\":\"String\",\"loopVariables\":false}]"
+    } ],
+    "playbookConnectionList" : [ {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86507,
+      "targetJobId" : 86513
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "targetJobId" : 86507,
+      "sourceTriggerId" : 9782
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86510,
+      "targetJobId" : 86521
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86515,
+      "targetJobId" : 86510
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86519,
+      "targetJobId" : 86514
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86519,
+      "targetJobId" : 86517
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86515,
+      "targetJobId" : 86519
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86521,
+      "targetJobId" : 86508
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86520,
+      "targetJobId" : 86521
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86514,
+      "targetJobId" : 86509
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86517,
+      "targetJobId" : 86509
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : true,
+      "sourceJobId" : 86498,
+      "targetTriggerId" : 9782
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86499,
+      "targetJobId" : 86498
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86508,
+      "targetJobId" : 86503
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86505,
+      "targetJobId" : 86508
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86509,
+      "targetJobId" : 86508
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86504,
+      "targetJobId" : 86508
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "targetJobId" : 86516,
+      "sourceTriggerId" : 9782
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "targetJobId" : 86515,
+      "sourceTriggerId" : 9782
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "targetJobId" : 86511,
+      "sourceTriggerId" : 9782
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86516,
+      "targetJobId" : 86505
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86518,
+      "targetJobId" : 86505
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86516,
+      "targetJobId" : 86518
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86520,
+      "targetJobId" : 86509
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86515,
+      "targetJobId" : 86520
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86511,
+      "targetJobId" : 86504
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86506,
+      "targetJobId" : 86504
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86511,
+      "targetJobId" : 86506
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86503,
+      "targetJobId" : 86502
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86502,
+      "targetJobId" : 86501
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86502,
+      "targetJobId" : 86512
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86501,
+      "targetJobId" : 86500
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86512,
+      "targetJobId" : 86500
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86500,
+      "targetJobId" : 86499
+    } ],
+    "playbookTriggerList" : [ {
+      "id" : 9782,
+      "name" : "Component Trigger",
+      "type" : "PipeConfig",
+      "eventType" : "External",
+      "locationLeft" : 80.0,
+      "locationTop" : 190.0,
+      "anyOrg" : true,
+      "playbookTriggerFilterList" : [ ],
+      "outputVariables" : "[{\"name\":\"cb.report.id\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"cb.report.md5\",\"type\":\"StringArray\",\"loopVariables\":false},{\"name\":\"cb.report.description\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"cb.report.severity\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"cb.report.dns\",\"type\":\"StringArray\",\"loopVariables\":false},{\"name\":\"cb.product\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"cb.report.title\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"cb.report.link\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"cb.report.ip\",\"type\":\"StringArray\",\"loopVariables\":false}]",
+      "pipeInputParams" : "[{\"label\":\"ID\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":true,\"name\":\"cb.report.id\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${TEXT}\"]},{\"label\":\"Title\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":true,\"name\":\"cb.report.title\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${TEXT}\"]},{\"label\":\"Description\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":true,\"name\":\"cb.report.description\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${TEXT}\"]},{\"label\":\"Severity\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":true,\"name\":\"cb.report.severity\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${TEXT}\"]},{\"label\":\"Source Link\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":false,\"name\":\"cb.report.link\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${TEXT}\"]},{\"label\":\"MD5s\",\"dataType\":\"String\",\"playbookDataType\":\"StringArray\",\"required\":false,\"name\":\"cb.report.md5\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[]},{\"label\":\"Addresses\",\"dataType\":\"String\",\"playbookDataType\":\"StringArray\",\"required\":false,\"name\":\"cb.report.ip\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[]},{\"label\":\"Hosts\",\"dataType\":\"String\",\"playbookDataType\":\"StringArray\",\"required\":false,\"name\":\"cb.report.dns\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[]},{\"label\":\"Product\",\"dataType\":\"Choice\",\"playbookDataType\":\"String\",\"required\":true,\"name\":\"cb.product\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"ThreatHunter\",\"Response\"]}]",
+      "pipeOutputParams" : "[{\"key\":\"cb.report\",\"value\":\"#App:86498:find_replace.output!String \",\"displayValue\":\"#App:86498:find_replace.output!String \"}]"
+    } ],
+    "playbookLabels" : [ {
+      "playbookLabelType" : {
+        "label" : "⬢ CB Response"
+      }
+    }, {
+      "playbookLabelType" : {
+        "label" : "⬢ CB ThreatHunter"
+      }
+    } ]
+  }, {
+    "definitionVersion" : "7714b91440a8a7d3e2458e4b9c69ccb0",
+    "name" : "⬢ Carbon Black ThreatHunter Feed",
+    "type" : "Pipe",
+    "panX" : -1366.0,
+    "panY" : 353.0,
+    "logLevel" : "WARN",
+    "description" : "This Component will create/update a CB ThreatHunter Feed with the Indicators from the ThreatConnect Owner.",
+    "version" : "1.150",
+    "comment" : "Auto-Saved on Wed Oct 02 21:34:34 UTC 2019",
+    "jobList" : [ {
+      "id" : 86692,
+      "appCatalogItem" : {
+        "programName" : "TCPB - HTTP Client v2.0",
+        "displayName" : "HTTP Client",
+        "programVersion" : "2.0.16"
+      },
+      "name" : "Update CB Report",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "headers"
+        },
+        "value" : "[{\"key\":\"X-Auth-Token\",\"value\":\"#Trigger:9792:cb.api_key!String/#Trigger:9792:cb.api_id!String\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "body"
+        },
+        "value" : "#App:86689:update_body!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "url"
+        },
+        "value" : "#Trigger:9792:cb.url!String/threathunter/feedmgr/v2/orgs/#Trigger:9792:cb.org_key!String/feeds/#App:86688:cb.feed.id!String/reports"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "http_method"
+        },
+        "value" : "POST"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "advanced"
+        },
+        "value" : "[]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "verify_ssl"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "urlencode_body"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "fail_on_error"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "exclude_null_parameters"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "proxies_enabled"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "multipart"
+        },
+        "value" : "[]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "params"
+        },
+        "value" : "[]"
+      } ],
+      "locationLeft" : 2760.0,
+      "locationTop" : -20.0,
+      "outputVariables" : "[{\"name\":\"http.status_code\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"http.content\",\"type\":\"String\",\"loopVariables\":false}]",
+      "layoutRequiredInputParams" : "[\"url\"]",
+      "layoutDisplayedInputParams" : "[\"url\",\"http_method\",\"params\",\"exclude_null_parameters\",\"headers\",\"body\",\"urlencode_body\",\"multipart\",\"advanced\",\"fail_on_error\",\"verify_ssl\",\"proxies_enabled\"]",
+      "playbookRetryDelayMinutes" : 1,
+      "playbookRetryMaxRetries" : 5
+    }, {
+      "id" : 86696,
+      "appCatalogItem" : {
+        "programName" : "d2c9607c65bb0d060da2bf1bd6339594",
+        "displayName" : "⬢ Carbon Black Report (Bulk)",
+        "programVersion" : "1.0.0",
+        "pipeRunLevel" : true
+      },
+      "name" : "⬢ CB Report (Bulk)",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "cb.report.severity"
+        },
+        "value" : "#App:86705:score!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "cb.report.link"
+        },
+        "value" : "https://#App:86697:tc_domain!String/"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "cb.report.md5"
+        },
+        "value" : "#App:86697:files!StringArray"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "cb.report.description"
+        },
+        "value" : "Indicators from the  #App:86697:owner_name!String #App:86697:owner_type!String."
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "cb.report.dns"
+        },
+        "value" : "#App:86697:hosts!StringArray"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "cb.report.title"
+        },
+        "value" : "ThreatConnect - #App:86697:owner_name!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "cb.report.id"
+        },
+        "value" : "tc-#App:86697:owner_id!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "cb.report.ip"
+        },
+        "value" : "#App:86697:addresses!StringArray"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "cb.product"
+        },
+        "value" : "ThreatHunter"
+      } ],
+      "locationLeft" : 1700.0,
+      "locationTop" : -20.0,
+      "outputVariables" : "[{\"name\":\"cb.report\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86708,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Set Bulk Body",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"update_body\",\"value\":\"{\\\"reports\\\": [#App:86696:cb.report!String]}\"},{\"key\":\"create_body\",\"value\":\"{\\\"feedinfo\\\": {\\\"name\\\": \\\"ThreatConnect - #App:86697:owner_name!String\\\",\\\"owner\\\": \\\"#Trigger:9792:cb.org_key!String\\\",\\\"provider_url\\\": \\\"#App:86697:tc_domain!String\\\",\\\"summary\\\": \\\"Indicators from the #App:86697:owner_name!String #App:86697:owner_type!String.\\\",\\\"category\\\": \\\"Partner\\\",\\\"access\\\": \\\"private\\\"},\\\"reports\\\": [#App:86696:cb.report!String]}\"}]"
+      } ],
+      "locationLeft" : 1920.0,
+      "locationTop" : -20.0,
+      "outputVariables" : "[{\"name\":\"create_body\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"update_body\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86700,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Default Score",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"default_score\",\"value\":\"1\"}]"
+      } ],
+      "locationLeft" : 880.0,
+      "locationTop" : 90.0,
+      "outputVariables" : "[{\"name\":\"default_score\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86704,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Owner Input",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"owner_input\",\"value\":\"#Trigger:9792:tc.owner.input!String\"}]"
+      } ],
+      "locationLeft" : 10.0,
+      "locationTop" : 0.0,
+      "outputVariables" : "[{\"name\":\"owner_input\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86701,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Dropdown Owner",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"owner_dropdown\",\"value\":\"#Trigger:9792:tc.owner.name!String\"}]"
+      } ],
+      "locationLeft" : 10.0,
+      "locationTop" : 90.0,
+      "outputVariables" : "[{\"name\":\"owner_dropdown\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86699,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Response",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"cb.response\",\"value\":\"#App:86692:http.content!String #App:86691:http.content!String\"},{\"key\":\"cb.status_code\",\"value\":\"#App:86692:http.status_code!String #App:86691:http.status_code!String\"}]"
+      } ],
+      "locationLeft" : 2990.0,
+      "locationTop" : 30.0,
+      "outputVariables" : "[{\"name\":\"cb.response\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86688,
+      "appCatalogItem" : {
+        "programName" : "TCPB - JMESPath v2.0",
+        "displayName" : "JMESPath",
+        "programVersion" : "2.0.5"
+      },
+      "name" : "Parse Feeds",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_expressions"
+        },
+        "value" : "[{\"key\":\"cb.feed.id\",\"value\":\"results[?name \\u003d\\u003d \\u0027ThreatConnect - #Trigger:9792:tc.owner.name!String\\u0027].id | [0]\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "json_data"
+        },
+        "value" : "#App:86694:http.content!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "strip_quotes"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "string_array_expressions"
+        },
+        "value" : "[]"
+      } ],
+      "locationLeft" : 2320.0,
+      "locationTop" : 70.0,
+      "outputVariables" : "[{\"name\":\"cb.feed.id\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86691,
+      "appCatalogItem" : {
+        "programName" : "TCPB - HTTP Client v2.0",
+        "displayName" : "HTTP Client",
+        "programVersion" : "2.0.16"
+      },
+      "name" : "Create CB Feed",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "body"
+        },
+        "value" : "#App:86689:create_body!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "headers"
+        },
+        "value" : "[{\"key\":\"X-Auth-Token\",\"value\":\"#Trigger:9792:cb.api_key!String/#Trigger:9792:cb.api_id!String\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "url"
+        },
+        "value" : "#Trigger:9792:cb.url!String/threathunter/feedmgr/v2/orgs/#Trigger:9792:cb.org_key!String/feeds"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "urlencode_body"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "exclude_null_parameters"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "fail_on_error"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "proxies_enabled"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "advanced"
+        },
+        "value" : "[]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "verify_ssl"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "multipart"
+        },
+        "value" : "[]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "params"
+        },
+        "value" : "[]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "http_method"
+        },
+        "value" : "POST"
+      } ],
+      "locationLeft" : 2760.0,
+      "locationTop" : 70.0,
+      "outputVariables" : "[{\"name\":\"http.status_code\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"http.content\",\"type\":\"String\",\"loopVariables\":false}]",
+      "layoutRequiredInputParams" : "[\"url\"]",
+      "layoutDisplayedInputParams" : "[\"url\",\"http_method\",\"params\",\"exclude_null_parameters\",\"headers\",\"body\",\"urlencode_body\",\"multipart\",\"advanced\",\"fail_on_error\",\"verify_ssl\",\"proxies_enabled\"]",
+      "playbookRetryDelayMinutes" : 1,
+      "playbookRetryMaxRetries" : 5
+    }, {
+      "id" : 86689,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️ Body",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"update_body\",\"value\":\"#App:86708:update_body!String #App:86695:update_body!String\"},{\"key\":\"create_body\",\"value\":\"#App:86708:create_body!String #App:86695:create_body!String\"}]"
+      } ],
+      "locationLeft" : 2160.0,
+      "locationTop" : 10.0,
+      "outputVariables" : "[{\"name\":\"create_body\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"update_body\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86702,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "No Filters",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"no_filters\",\"value\":\"none\"}]"
+      } ],
+      "locationLeft" : 440.0,
+      "locationTop" : 90.0,
+      "outputVariables" : "[{\"name\":\"no_filters\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86707,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Filter Input",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"filter_input\",\"value\":\"#Trigger:9792:tc.filters!String\"}]"
+      } ],
+      "locationLeft" : 440.0,
+      "locationTop" : 0.0,
+      "outputVariables" : "[{\"name\":\"filter_input\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86693,
+      "appCatalogItem" : {
+        "programName" : "If / Else",
+        "displayName" : "If / Else",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Exists?",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "operand_1"
+        },
+        "value" : "\"#App:86688:cb.feed.id!String\""
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "operator"
+        },
+        "value" : "not equals"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_numeric"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "operand_2"
+        },
+        "value" : "\"<VARIABLE_NOT_FOUND>\""
+      } ],
+      "locationLeft" : 2590.0,
+      "locationTop" : 10.0
+    }, {
+      "id" : 86695,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Set Individual Body",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"update_body\",\"value\":\"{\\\"reports\\\": #App:86709:reports!String }\"},{\"key\":\"create_body\",\"value\":\"{\\\"feedinfo\\\": {\\\"name\\\": \\\"ThreatConnect - #App:86697:owner_name!String\\\",\\\"owner\\\": \\\"#Trigger:9792:cb.org_key!String\\\",\\\"provider_url\\\": \\\"https://#App:86697:tc_domain!String/\\\",\\\"summary\\\": \\\"Indicators from the #App:86697:owner_name!String #App:86697:owner_type!String.\\\",\\\"category\\\": \\\"Partner\\\",\\\"access\\\": \\\"private\\\"},\\\"reports\\\": #App:86709:reports!String }\"}]"
+      } ],
+      "locationLeft" : 1920.0,
+      "locationTop" : 70.0,
+      "outputVariables" : "[{\"name\":\"update_body\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"create_body\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86709,
+      "appCatalogItem" : {
+        "programName" : "350fa9b80d39761edc2113b0a47a92cf",
+        "displayName" : "⬢ Carbon Black Reports",
+        "programVersion" : "1.0.0",
+        "pipeRunLevel" : true
+      },
+      "name" : "⬢ CB Reports",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "md5.json"
+        },
+        "value" : "#App:86697:raw_json!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "host.json"
+        },
+        "value" : "#App:86697:raw_json!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "query.json"
+        },
+        "value" : "#App:86697:raw_json!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "address.json"
+        },
+        "value" : "#App:86697:raw_json!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "cb.product"
+        },
+        "value" : "ThreatHunter"
+      } ],
+      "locationLeft" : 1700.0,
+      "locationTop" : 70.0,
+      "outputVariables" : "[{\"name\":\"reports\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86705,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️ Score",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"score\",\"value\":\"#App:86703:score_input!String #App:86700:default_score!String\"}]"
+      } ],
+      "locationLeft" : 1140.0,
+      "locationTop" : 0.0,
+      "outputVariables" : "[{\"name\":\"score\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86706,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️ Filters",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"filters\",\"value\":\"#App:86707:filter_input!String #App:86702:no_filters!String\"}]"
+      } ],
+      "locationLeft" : 700.0,
+      "locationTop" : 0.0,
+      "outputVariables" : "[{\"name\":\"filters\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86698,
+      "appCatalogItem" : {
+        "programName" : "Merge",
+        "displayName" : "Merge",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "⚙️ Owner",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "output_array"
+        },
+        "value" : "[{\"key\":\"owner\",\"value\":\"#App:86704:owner_input!String #App:86701:owner_dropdown!String\"}]"
+      } ],
+      "locationLeft" : 270.0,
+      "locationTop" : 0.0,
+      "outputVariables" : "[{\"name\":\"owner\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86694,
+      "appCatalogItem" : {
+        "programName" : "TCPB - HTTP Client v2.0",
+        "displayName" : "HTTP Client",
+        "programVersion" : "2.0.16"
+      },
+      "name" : "Get all CB Feeds",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "headers"
+        },
+        "value" : "[{\"key\":\"X-Auth-Token\",\"value\":\"#Trigger:9792:cb.api_key!String/#Trigger:9792:cb.api_id!String\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "url"
+        },
+        "value" : "#Trigger:9792:cb.url!String/threathunter/feedmgr/v2/orgs/#Trigger:9792:cb.org_key!String/feeds"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "params"
+        },
+        "value" : "[{\"key\":\"include_public\",\"value\":\"true\"}]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "fail_on_error"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "http_method"
+        },
+        "value" : "GET"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "verify_ssl"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "body"
+        }
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "exclude_null_parameters"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "urlencode_body"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "multipart"
+        },
+        "value" : "[]"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "proxies_enabled"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "advanced"
+        },
+        "value" : "[]"
+      } ],
+      "locationLeft" : 2320.0,
+      "locationTop" : -20.0,
+      "outputVariables" : "[{\"name\":\"http.content\",\"type\":\"String\",\"loopVariables\":false}]",
+      "layoutRequiredInputParams" : "[\"url\"]",
+      "layoutDisplayedInputParams" : "[\"url\",\"http_method\",\"params\",\"exclude_null_parameters\",\"headers\",\"advanced\",\"fail_on_error\",\"verify_ssl\",\"proxies_enabled\"]",
+      "playbookRetryDelayMinutes" : 1,
+      "playbookRetryMaxRetries" : 5
+    }, {
+      "id" : 86697,
+      "appCatalogItem" : {
+        "programName" : "dc54ebbd81afed9d8f881b33f8e84c19",
+        "displayName" : "Get Filtered Indicators",
+        "programVersion" : "1.0.0",
+        "pipeRunLevel" : true
+      },
+      "name" : "Get Filtered Indicators",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "filters"
+        },
+        "value" : "#App:86706:filters!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "owner_input"
+        },
+        "value" : "#App:86698:owner!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "owner_dropdown"
+        },
+        "value" : "Carbon Black"
+      } ],
+      "locationLeft" : 1290.0,
+      "locationTop" : 0.0,
+      "outputVariables" : "[{\"name\":\"owner_name\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"files\",\"type\":\"StringArray\",\"loopVariables\":false},{\"name\":\"addresses\",\"type\":\"StringArray\",\"loopVariables\":false},{\"name\":\"owner_id\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"owner_type\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"raw_json\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"tc_domain\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"hosts\",\"type\":\"StringArray\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86703,
+      "appCatalogItem" : {
+        "programName" : "TCPB - SetVariable v1.0",
+        "displayName" : "Set Variable",
+        "programVersion" : "1.0.13"
+      },
+      "name" : "Score Input",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "variable_mapping"
+        },
+        "value" : "[{\"key\":\"score_input\",\"value\":\"#Trigger:9792:cb.score!String\"}]"
+      } ],
+      "locationLeft" : 880.0,
+      "locationTop" : 0.0,
+      "outputVariables" : "[{\"name\":\"score_input\",\"type\":\"String\",\"loopVariables\":false}]"
+    }, {
+      "id" : 86690,
+      "appCatalogItem" : {
+        "programName" : "If / Else",
+        "displayName" : "If / Else",
+        "programVersion" : "1.0.0"
+      },
+      "name" : "Bulk?",
+      "jobParameterList" : [ {
+        "appCatalogItemParameter" : {
+          "paramName" : "operand_1"
+        },
+        "value" : "#Trigger:9792:cb.bulk!String"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "operand_2"
+        },
+        "value" : "true"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "as_numeric"
+        },
+        "value" : "false"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "operator"
+        },
+        "value" : "equals"
+      }, {
+        "appCatalogItemParameter" : {
+          "paramName" : "match_case"
+        },
+        "value" : "false"
+      } ],
+      "locationLeft" : 1550.0,
+      "locationTop" : 10.0
+    } ],
+    "playbookConnectionList" : [ {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86705,
+      "targetJobId" : 86697
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86700,
+      "targetJobId" : 86705
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86703,
+      "targetJobId" : 86705
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86703,
+      "targetJobId" : 86700
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86706,
+      "targetJobId" : 86703
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86702,
+      "targetJobId" : 86706
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86707,
+      "targetJobId" : 86706
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86707,
+      "targetJobId" : 86702
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86698,
+      "targetJobId" : 86707
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86701,
+      "targetJobId" : 86698
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86704,
+      "targetJobId" : 86701
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86704,
+      "targetJobId" : 86698
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "targetJobId" : 86704,
+      "sourceTriggerId" : 9792
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86696,
+      "targetJobId" : 86708
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86693,
+      "targetJobId" : 86691
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86693,
+      "targetJobId" : 86692
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : true,
+      "sourceJobId" : 86699,
+      "targetTriggerId" : 9792
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86692,
+      "targetJobId" : 86699
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86691,
+      "targetJobId" : 86699
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86694,
+      "targetJobId" : 86688
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86688,
+      "targetJobId" : 86693
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86697,
+      "targetJobId" : 86690
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86690,
+      "targetJobId" : 86696
+    }, {
+      "type" : "Fail",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86690,
+      "targetJobId" : 86709
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86709,
+      "targetJobId" : 86695
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86708,
+      "targetJobId" : 86689
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86695,
+      "targetJobId" : 86689
+    }, {
+      "type" : "Pass",
+      "isCircularOnTarget" : false,
+      "sourceJobId" : 86689,
+      "targetJobId" : 86694
+    } ],
+    "playbookTriggerList" : [ {
+      "id" : 9792,
+      "name" : "Component Trigger",
+      "type" : "PipeConfig",
+      "eventType" : "External",
+      "locationLeft" : -230.0,
+      "locationTop" : -70.0,
+      "anyOrg" : true,
+      "playbookTriggerFilterList" : [ ],
+      "outputVariables" : "[{\"name\":\"cb.org_key\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"cb.api_id\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"cb.url\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"cb.api_key\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"tc.owner.name\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"cb.bulk\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"cb.score\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"tc.owner.input\",\"type\":\"String\",\"loopVariables\":false},{\"name\":\"tc.filters\",\"type\":\"String\",\"loopVariables\":false}]",
+      "pipeInputParams" : "[{\"label\":\"Carbon Black URL\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":true,\"name\":\"cb.url\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${TEXT}\"]},{\"label\":\"Carbon Black API ID\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":true,\"name\":\"cb.api_id\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${TEXT}\"]},{\"label\":\"Carbon Black API Secret Key\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":true,\"name\":\"cb.api_key\",\"encrypted\":true,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${KEYCHAIN}\"]},{\"label\":\"Carbon Black Org Key\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":true,\"name\":\"cb.org_key\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${TEXT}\"]},{\"label\":\"ThreatConnect Owner\",\"dataType\":\"Choice\",\"playbookDataType\":\"String\",\"required\":true,\"name\":\"tc.owner.name\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${OWNERS}\"]},{\"label\":\"Owner Variable (optional)\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":false,\"name\":\"tc.owner.input\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${TEXT}\"]},{\"label\":\"Filters (optional)\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":false,\"name\":\"tc.filters\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${TEXT}\"]},{\"label\":\"Bulk?\",\"dataType\":\"Boolean\",\"playbookDataType\":\"String\",\"required\":false,\"name\":\"cb.bulk\",\"encrypted\":true,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${TEXT}\",\"${KEYCHAIN}\"]},{\"label\":\"Bulk Score (1-10, optional)\",\"dataType\":\"String\",\"playbookDataType\":\"String\",\"required\":false,\"name\":\"cb.score\",\"encrypted\":false,\"hidden\":false,\"hasDollarVariables\":false,\"playbookVariable\":false,\"validValuesList\":[\"${TEXT}\"]}]",
+      "pipeOutputParams" : "[{\"key\":\"cb.result\",\"value\":\"#App:86699:cb.response!String \",\"displayValue\":\"#App:86699:cb.response!String \"},{\"key\":\"data\",\"value\":\"#App:86689:create_body!String \",\"displayValue\":\"#App:86689:create_body!String \"}]"
+    } ],
+    "playbookLabels" : [ {
+      "playbookLabelType" : {
+        "label" : "⬢ CB ThreatHunter"
+      }
+    } ]
+  } ]
+}
