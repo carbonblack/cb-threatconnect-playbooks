@@ -28,7 +28,7 @@ The Playbook is configured with an HttpLink Trigger. Use the trigger URL as the 
 
  Example: `https://sandbox.threatconnect.com/api/playbook/ca691eca-55b5-43aa-be27-f6a2609b1e61?owner=Hybrid Analysis&filters=rating>3,confidence>50&bulk=true&score=75`
  
-![](CBR TC Integration/example.gif)
+![](CBR_TC_Example.gif)
 
 # CB Threat Hunter Threat Connect Integration
 
@@ -56,4 +56,4 @@ After the integration pushes the data to CB ThreatHunter, a user needs ot "Subsc
  2. In the upper right, select **Add watchlists**
  3. Find your new feed(s), check the box on the left, and click **Subscribe**
 
-![](CBTH TC Integration/example.gif)
+![](CBTH_TC_Example.gif)
