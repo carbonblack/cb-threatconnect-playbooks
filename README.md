@@ -1,6 +1,6 @@
-#CB Response Threat Connect Integration
+# CB Response Threat Connect Integration
 
-##Installation 
+## Installation 
 
   1. Create a new Document in your Organization named "ThreatConnect Logo". Upload the `tc_logo.b64` as the file.
   2. Import the PBX file. (this creates several new components)
@@ -8,7 +8,7 @@
   7. Active the Playbook
 
 
-###Instructions for Query Indicators:
+### Instructions for Query Indicators:
 
   1. Create a new custom indicator type called `CB-Watchlist`
   2. Create a new attribute validation named `CB Query Type`. It should be a `SelectOne` with this rule: `Process;Binary`
@@ -17,7 +17,7 @@
   	b. CB Query Type (limit 7, validation `CB Query Type`)
   4. Set the 2 attributes as default on teh `CB Watchlist` indicator (optional)
 
-##Usage
+## Usage
 
 The Playbook is configured with an HttpLink Trigger. Use the trigger URL as the URL input in CB Response after clicking **+ Add New Feed**. There are 4 parameters allowed for filtering the data returned:
 
@@ -30,16 +30,16 @@ The Playbook is configured with an HttpLink Trigger. Use the trigger URL as the 
  
 ![](CBR TC Integration/example.gif)
 
-#CB Threat Hunter Threat Connect Integration
+# CB Threat Hunter Threat Connect Integration
 
-##Installation
+## Installation
 
   1. Import the PBX file. (this creates 3 new components)
   2. Activate all 3 new components
   3. Activate the Playbook and execute
 
 
-###Instructions for Query Indicators:
+### Instructions for Query Indicators:
 
   1. Create a new custom indicator type called `CB-Watchlist`
   2. Create a new attribute validation named `CB Query Type`. It should be a `SelectOne` with this rule: `Process;Binary`
@@ -48,7 +48,7 @@ The Playbook is configured with an HttpLink Trigger. Use the trigger URL as the 
   	b. CB Query Type (limit 7, validation `CB Query Type`)
   4. Set the 2 attributes as default on teh `CB Watchlist` indicator (optional)
 
-##Usage
+## Usage
 
 After the integration pushes the data to CB ThreatHunter, a user needs ot "Subscribe" to the feed.
 
